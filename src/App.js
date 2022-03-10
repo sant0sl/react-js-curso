@@ -1,55 +1,58 @@
-import React, {useEffect, useState, useMemo, useCallback} from 'react';
+import React, {Component} from 'react';
+import './css/style.css'
 
-function App(){
+class App extends Component{
 
-  const [tarefas, setTarefas] = useState([
-    'Pagar netfuturo',
-    'Estudar udemy'
-  ]);
+  constructor(props){
+    super(props);
+    this.state = {
+      tempo: 0,
+      botao1: 'Go!',
+      botao2: 'Clear'
+    };
+    this.timer = null;
+    this.start = this.start.bind(this);
+    this.clear = this.clear.bind(this);
+  }
 
-  const [input, setInput] = useState('');
-
-  /*function handleAdd(){
-    setTarefas([...tarefas, input]);
-    setInput('');
-  };*/
-  //Função que substitui a handleAdd, economizando processamento
-  const handleAdd = useCallback(() =>{
-    setTarefas([...tarefas, input]);
-    setInput('');
-  }, [input, tarefas]);
-
-  //Verifica diretamente da lista, a quantidade que existe
-  const totalTarefas = useMemo(()=> tarefas.length, [tarefas]);
-
-  //Busca lista em storage (componentDidMount)
-  useEffect(() => {
-    const tarefasStorage = localStorage.getItem('tarefas');
-    if(tarefasStorage){
-      setTarefas(JSON.parse(tarefasStorage));
+  start(){
+    let state = this.state;
+    if(this.timer !== null){
+      clearInterval(this.timer);
+      this.timer = null;
+      state.botao1 = 'Go!';
     }
-  }, []);
-  
-  //Salva lista em storage (componentDidUpdate)
-  useEffect(() => {
-    localStorage.setItem('tarefas', JSON.stringify(tarefas));
-  }, [tarefas]);
+    else{
+      this.timer = setInterval(()=>{
+        state.tempo += 0.1;
+        this.setState(state);
+      }, 100);
+      state.botao1 = 'Pause';
+    }
+    this.setState(state);
+  }
 
-  return(
-    <div align='center'>
-      <ul>
-        {tarefas.map(tarefa => (
-          <li key={tarefa}>{tarefa}</li>
-        ))}
-      </ul>
-      <br/>
-      <strong>Voce possui: {totalTarefas} tarefas</strong>
-      <br/>
-      <input type='text' placeholder='Insira algo para a lista' value={input} onChange={e => setInput(e.target.value)}/>
-      <button type='button' onClick={handleAdd}>Adicionar</button>
+  clear(){
+    let state = this.state;
+    clearInterval(this.timer);
+    this.timer = null;
+    state.tempo = 0;
+    state.botao1 = 'Go!';
+    this.setState(state);
+  }
 
-    </div>
-  );
+  render(){
+    return(
+      <div className="container" align='center'>
+        <img src={require('./assets/cronometro.png')} className="img"/>
+        <a className="timer">{this.state.tempo.toFixed(1)}</a>
+        <div className="areaBtn">
+          <a className="botao" onClick={this.start}>{this.state.botao1}</a>
+          <a className="botao" onClick={this.clear}>{this.state.botao2}</a>
+        </div>
+      </div>
+    );
+  }
 }
 
 export default App;
