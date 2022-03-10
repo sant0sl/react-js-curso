@@ -765,3 +765,15 @@ export default App;
 -----------------------------
 
 //React Avançado - Requisições http
+import React from 'react';
+
+function App(){
+
+  return(
+    <div align='center'>
+      
+    </div>
+  );
+}
+
+export default App;
