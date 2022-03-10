@@ -441,7 +441,7 @@ export default App;
 
 //Projeto Biscoito da Sorte
 import React, {Component} from 'react';
-import './estilo.css'
+import './css/estilo.css'
 
 class App extends Component{
 
